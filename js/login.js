@@ -22,12 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isAuthenticated) {
     if (username) {
       userNav.textContent = username;
-      userNav.href = "/my-profile.html";
+      userNav.href = "my-profile.html";
     }
   } else {
     userNav.textContent = "Iniciar Sesión";
     userNav.href = "/login.html";
   }
+
+  //Funcion para limpiar el localstorage, al cerrar sesion
+  let logout = document.getElementById("logout");
+  logout.addEventListener("click", function () {
+    localStorage.removeItem("username");
+  });
 });
 
 // Variables para el formulario y las alertas

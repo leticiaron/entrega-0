@@ -11,9 +11,18 @@
       href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,400i,700,700i,900,900i"
       rel="stylesheet"
     />
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/font-awesome.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link
+    href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet"
+  />
   </head>
 
   <body>
@@ -42,45 +51,263 @@
               <a class="nav-link" href="sell.html">Vender</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="login.html" id="user-nav"
-                >Iniciar Sesión</a
-              >
+            <div class="dropdown">
+              <a id="user-nav" class="btn dropdown-toggle nav-link" href="login.html" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Iniciar Sesión
+              </a>
+              <ul class="dropdown-menu">
+                <li><a id="image-cart" class="dropdown-item" href="cart.html">Mi carrito</a></li>
+                <li><a class="dropdown-item" href="my-profile.html">Mi perfil</a></li>
+                <li><a id="logout" class="dropdown-item" href="login.html">Cerrar sesión</a></li>
+              </ul>
+            </div>
             </li>
           </ul>
+        </div>
+               <!-- Carrito badge --> 
+        <div id="nav-carrito">
+        <li  class="nav-item">
+                  <a class="nav-link" href="cart.html">
+                  <i class="fas fa-shopping-cart"></i>
+                  <span class="valorFinalCar top-0 badge translate-middle  rounded-pill bg-danger" id="cartBadge"></span></a>          
+      </li>
+    </div>
         </div>
       </div>
     </nav>
     <main>
-      <div class="container">
-        <div class="alert alert-danger text-center" role="alert">
-          <h4 class="alert-heading">Funcionalidad en desarrollo</h4>
+      <br>
+      <div id="cartCompras"><br>
+       <h2 id="carritoTitulo">MI CARRITO</h2>
+      
+        <div id="containerCarritoVacio"></div>
+        <br>
+
+        <div id="containerPrincipal" class="background" >
+          <div id="containerCarritoLleno"></div>
+
+          <br class="final-price">
+        
+          <div id="finallity-table"></div>
+        </div>
+
+        <div id="transitionCost"></div>
+
+          <div id="container-costos" class="background">
+
+            <form action="" id="cost-form" class="col" novalidate>
+              <div class="row cost-row">
+                <div class="section-cost-form col">
+                  <h2>Tipo de envío</h2>
+                </div>
+
+                <!--TIPO DE ENVIO-->
+                <div  class="shipping-cost input-group col">
+                  <div  class="cost-control cost-radio">
+                    <input id="cost-premium" class="form-check-input mt-0" type = "radio" name = "cost" value = "premium" />
+                    <label for="cost-control-label">Premium 2 a 5 días (15%)</label>
+                  </div>
+                  <div class="cost-control cost-radio">
+                    <input id="cost-express" class="form-check-input mt-0" type = "radio" name = "cost" value = "express" />
+                    <label for="cost-control-label">Express 5 a 8 días (7%)</label>
+                  </div>
+                  <div class="cost-control cost-radio">
+                    <input id="cost-standard" class="form-check-input mt-0" type = "radio" name = "cost" value = "standard" checked/>
+                    <label for="cost-control-label">Standard 12 a 15 días (5%)</label>
+                  </div>
+                </div>
+              </div>
+
+<div id="cFin"></div>
+              <!--DIRECCION DE ENVIO-->
+              <div class="row cost-row">
+                <div  class="section-cost-form col">
+                  <h2>Dirección de <br> envío</h2>
+                </div>
+
+                <div class="shipping-address input-group col">
+                  <p><select   class="confirmar-form-select form-select form-control shipping-control" id="input-localidad" required>
+                    <option hidden>Departamento: </option>
+                    <option  value="1">Artigas</option>
+                    <option value="2">Canelones</option>
+                    <option value="3">Cerro Largo</option>
+                    <option value="4">Colonia</option>
+                    <option value="5">Durazno</option>
+                    <option value="6">Flores</option>
+                    <option value="7">Florida</option>
+                    <option value="8">Lavalleja</option>
+                    <option value="9">Maldonado</option>
+                    <option value="10">Montevideo</option>
+                    <option value="11">Paysandu</option>
+                    <option value="12">Río Negro</option>
+                    <option value="13">Rivera</option>
+                    <option value="14">Rocha</option>
+                    <option value="15">Salto</option>
+                    <option value="16">San José</option>
+                    <option value="17">Soriano</option>
+                    <option value="18">Tacuarembo</option>
+                    <option value="19">Treinta y Tres</option>
+                  </select></p>
+                  <p><input type="text" class="confirmar-formulario form-control shipping-control" placeholder="Localidad:"  required></p>
+                  <p><input type="text" class="confirmar-formulario form-control shipping-control" placeholder="Calle:"  required></p>
+                  <p class="address-number"><input type="text" class="confirmar-formulario form-control shipping-control" placeholder="Nro:" required ><input type="text" class="confirmar-formulario form-control shipping-control" placeholder="Apto:" required></p>
+                  <p><input type="text" class="confirmar-formulario form-control shipping-control" placeholder="Esquina:" required ></p>
+                </div>
+
+              </div>
+
+
+              <!--FORMA DE PAGO-->
+              <div class="row cost-row" id="paymentSection">
+                <div id="inicial" class="section-cost-form col">
+                  <h2>Forma de pago</h2>
+                </div>
+
+                <div class="payment insert-alert-card input-group col" >
+                  <div  class="payment-control payment-radio"  >
+                    <input class="form-check-input mt-0"  type = "radio" name = "payment" value = "tarjeta" id="paymentTarjeta"/>
+                    <label   for="adress-control-label" class="payment-label">Tarjeta de crédito/débito</label>
+                  </div><div id="oni"></div>
+                  <div class="payment-control payment-radio" >
+                    <input class="form-check-input mt-0"  type = "radio" name = "payment" value = "entrega" id="paymentEntrega" />
+                    <label for="adress-control-label" class="payment-label">Pago contra entrega</label>
+                  </div>
+                </div>
+              </div>
+           
+
+              <!--SECCIÓN DETALLES DE LA TARJETA-->
+              <div id="creditCardSection" class="row cost-row details-section">
+                <div class="col">
+                </div>
+
+                <div class="card-payment input-group col">
+                  <h2 id="card-detail">DETALLES TARJETA</h2>
+                  <p><input type="text" id="cardholder" class="card-control form-control" name="cardholder" placeholder="Titular:" required></p>
+                  <p><input type="text" id="cardNumber" class="card-control form-control" name="cardNumber" placeholder="Nro de Tarjeta:" required></p>
+                  <p class="card-info"><input type="text" id="expiryDate" class="card-control form-control" name="expiryDate" placeholder="Vto: MM/AA" required><input type="text" id="ccv" name="ccv" min="3" max="3" class="card-control" placeholder="CVV:" required></p>
+                  <p><select name="installments" id="installments" class="card-control form-select form-control">
+                        <option hidden>Cuotas:</option>
+                        <option value="1">1 Cuota</option>
+                        <option value="3">3 Cuotas</option>
+                        <option value="6">6 Cuotas</option>
+                        <option value="12">12 Cuotas</option>
+                      </select>
+                  </p>
+                </div>
+              </div>
+
+              <!--SECCIÓN PAGO CONTRA ENTREGA-->
+            <div id="deliveryPaymentSection" class="row cost-row details-section">
+              <div class="col">
+              </div>
+              <div class="payment input-group col" >
+                <h2 id="delivery-detail">MÉTODO DE PAGO</h2>
+                <div class="payment-control payment-radio"  >
+                  <input class="form-check-input mt-0"  type = "radio" name = "paymentDelivery" value = "tarjeta" />
+                  <label   for="adress-control-label" class="payment-label">Tarjeta de crédito</label>
+                </div>
+                <div class="payment-control payment-radio" >
+                  <input  class="form-check-input mt-0"  type = "radio" name = "paymentDelivery" value = "transferencia"  />
+                  <label for="adress-control-label" class="payment-label">Tarjeta de débito</label>
+                </div>
+                <div class="payment-control payment-radio" >
+                  <input class="form-check-input mt-0"  type = "radio" name = "paymentDelivery" value = "entrega"  />
+                  <label for="adress-control-label" class="payment-label">Efectivo</label>
+                </div>
+              </div>
+            </div>
+
+              <!--PRECIO FINAL-->
+              <div class="total-purchase row">
+                <div class="final-amount col-3" id="text-final-amount">
+                  <p>Subtotal:</p>
+                  <p>Costo de envío:</p>
+                  <p>Total:</p>
+                </div>
+
+                <div class="col-3 final-amount">
+                  <p><span id="subFinalAmount"></span> UYU</p>
+                  <p><span id="costFinalAmount"></span> UYU</p>
+                  <p><span id="totalFinalAmount"></span> UYU</p>
+                </div>
+              </div>
+
+              <!--BOTÓN FINALIZAR COMPRA-->
+              <button type="submit" id="btn-final-payment">FINALIZAR COMPRA</button>
+            </form>
+          </div>
         </div>
       </div>
-    </main>
-    <footer class="text-muted">
-      <div class="container">
-        <p class="float-end">
-          <a href="#navbar">Volver arriba</a>
+
+      <div id="spinner-wrapper">
+        <div class="lds-ring">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+
+  </main>
+  <!--MODAL FINALIZAR COMPRA-->
+  <div data-bs-backdrop="static"
+        class="modal fade"
+        id="confirmationModal" 
+        tabindex="-1"
+        aria-labelledby="confirmationModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmationModalLabel">
+                ¡Compra realizada exitosamente!<br>
+                Hemos enviado la informacion correspondiente a 
+                su correo<span id="email-final"></span></h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-footer">
+        
+              <button
+                type="button"
+                class="btn btn-dark-azul"
+                 id="final-btn-carr"
+              >
+              Ir a categorias
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <footer class="footer-container">
+      <div class="footer-content">
+        <hr />
+        <p>
+          <a class="footer-link" href="#title-container">Volver arriba</a>
         </p>
         <p>
           Este sitio forma parte de
-          <a href="https://jovenesaprogramar.edu.uy/" target="_blank"
-            >Jovenes a Programar</a
+          <a
+            class="footer-link"
+            href="https://jovenesaprogramar.edu.uy/"
+            target="_blank"
+            >Jóvenes a Programar</a
           >
         </p>
+        <hr />
       </div>
     </footer>
-    <div id="spinner-wrapper">
-      <div class="lds-ring">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </div>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/init.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/login.js"></script>
+    <script src="js/dark-mode.js"></script>
   </body>
 </html>

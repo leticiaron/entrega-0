@@ -39,12 +39,17 @@ function showProduct(infoCard) {
       <p>${infoCard.description}</p>
       <p class="st-products-category">Categoría: </br><span>${infoCard.category}</span></p>
       <p class="totalSold st-products-category">Cantidad de vendidos:</br><span>${infoCard.soldCount} vendidos<span></p>
+      <p class="product-cost st-products-category">Precio:</br><span>${infoCard.cost}${infoCard.currency}</span></p>
+    <div class="buy-btn-container">
+    <button class="btn-comprar">AÑADIR AL CARRITO</button>
     </div>
+      </div>
   `;
 
   containerMainImage.innerHTML += `
     <img class="mainImage" id=mainImage src="${infoCard.images[0]}" alt="imagen principal">
   `;
+
   changeMainImage(infoCard.images[0]);
   //Bucle que recorre el array de imágenes
   for (let i = 0; i < infoCard.images.length; i++) {
@@ -151,6 +156,98 @@ function showProdCommInfo(commCard) {
     btnNewComm.remove();
   });
 
+  // Función para manejar el feedback de los campos
+  function setFeedback(input, feedbackElement, isValid, message) {
+    if (isValid) {
+      input.classList.add("is-valid");
+      input.classList.remove("is-invalid");
+      feedbackElement.innerText = "";
+    } else {
+      input.classList.add("is-invalid");
+      input.classList.remove("is-valid");
+      feedbackElement.innerText = message;
+    }
+  }
+
+  // Validación en tiempo real para el campo de texto del comentario
+  let commentInput = document.getElementById("commentText");
+  commentInput.addEventListener("input", function () {
+    let isValid = this.value.trim() !== "";
+    setFeedback(
+      this,
+      document.getElementById("feedbackCommentText"),
+      isValid,
+      "Este campo es obligatorio"
+    );
+  });
+
+  // Validación en tiempo real para las estrellas
+  let starInputs = document.getElementsByName("estrellas");
+  starInputs.forEach((star) => {
+    star.addEventListener("change", function () {
+      validateStars();
+    });
+  });
+
+  // Función para validar y mostrar feedback de las estrellas
+  function validateStars() {
+    let starInputs = document.getElementsByName("estrellas");
+    let ratingChecked = Array.from(starInputs).some((star) => star.checked);
+    let feedbackStar = document.getElementById("feedbackStar");
+
+    if (!ratingChecked) {
+      feedbackStar.style.display = "block";
+      feedbackStar.innerText = "Debes seleccionar una calificación";
+    } else {
+      feedbackStar.style.display = "none";
+      feedbackStar.innerText = "";
+    }
+
+    return ratingChecked;
+  }
+
+  // Función de validación general para el formulario
+  function validateForm() {
+    let isValid = true;
+
+    // Validación del campo de comentario
+    let commentText = document.getElementById("commentText");
+    let isCommentValid = commentText.value.trim() !== "";
+    setFeedback(
+      commentText,
+      document.getElementById("feedbackCommentText"),
+      isCommentValid,
+      "Este campo es obligatorio"
+    );
+
+    // Validación de las estrellas
+    let isStarsValid = validateStars();
+
+    isValid = isCommentValid && isStarsValid;
+    return isValid;
+  }
+
+  // Evento para manejar el envío del formulario
+  let commentForm = document.getElementById("newCommentForm");
+  commentForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    if (validateForm()) {
+      addNewComment();
+
+      // Limpiar el formulario y los estados de validación
+      this.reset();
+      let commentText = document.getElementById("commentText");
+      commentText.classList.remove("is-valid", "is-invalid");
+
+      let feedbackStar = document.getElementById("feedbackStar");
+      let feedbackCommentText = document.getElementById("feedbackCommentText");
+      feedbackStar.style.display = "none";
+      feedbackStar.innerText = "";
+      feedbackCommentText.innerText = "";
+    }
+  });
+
   // Función para mostrar la fecha y hora actual al escribir comentario
   function currentTime() {
     let currentDate = new Date();
@@ -223,11 +320,40 @@ function scoreStars(score) {
 
 // PRODUCTOS RELACIONADOS ENTREGA 4
 
+//Spinner de carga al cambiar de producto
+let spinnerHTML = `
+<div id="loading-spinner" class="loading-overlay d-none">
+  <div class="spinner-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+</div>
+`;
+document.body.insertAdjacentHTML("afterbegin", spinnerHTML);
+
+let loadingSpinner = document.getElementById("loading-spinner");
+
+// Función para mostrar el spinner
+function showSpinnerRel() {
+  loadingSpinner.classList.remove("d-none");
+}
+
+// Función para ocultar el spinner
+function hideSpinnerRel() {
+  loadingSpinner.classList.add("fade-out");
+  setTimeout(() => {
+    loadingSpinner.classList.add("d-none");
+    loadingSpinner.classList.remove("fade-out");
+  }, 300);
+}
+
 //Realizacion de fetch para obtener los datos que se encuentran dentro del json e Invocacion de funcion una vez obtenidos los mismos.
 fetch(prodInfoURL)
   .then((response) => response.json())
   .then((infoRel) => {
     showRel(infoRel);
+    hideSpinnerRel();
   });
 
 let containerRelacionado = document.getElementById("carouselExampleCaptions");
@@ -241,7 +367,7 @@ function showRel(infoRel) {
   <img id="img-rel0" src="${infoRel.relatedProducts[0].image}" class="card-img-top" alt="...">
   <div class="card-body card-button">
      <h5 class="card-title rel-name">${infoRel.relatedProducts[0].name}</h5> 
-    <button  onclick="setProdID(${infoRel.relatedProducts[0].id})" class="ver-ver0" type="button">VER MAS</button>
+    <button  onclick="setProdID(${infoRel.relatedProducts[0].id}, event)" class="ver-ver0" type="button">VER MAS</button>
   </div>
 </div>
 </div>
@@ -251,7 +377,7 @@ function showRel(infoRel) {
     <img  id="img-rel" src="${infoRel.relatedProducts[1].image}" class="card-img-top" alt="...">
     <div class="card-body card-button">
      <h5 class="card-title mod-titulo rel-name">${infoRel.relatedProducts[1].name}</h5>
-     <button onclick="setProdID(${infoRel.relatedProducts[1].id})" class="ver-ver0" type="button">VER MAS</button>
+     <button onclick="setProdID(${infoRel.relatedProducts[1].id}, event)" class="ver-ver0" type="button">VER MAS</button>
     </div>
  </div>
 </div>
@@ -267,8 +393,110 @@ function showRel(infoRel) {
 `;
 }
 //funcion que realiza la actualizacion el id del local storage al hacer clic en el boton(linea 147 y 137) del producto del que quiere saber mas informacion.
-function setProdID(id) {
+function setProdID(id, event) {
+  // Obtén el botón desde el evento
+  const button = event.target;
+
+  // Agrega clase loading al botón
+  button.classList.add("loading");
+
+  // Mostrar el spinner
+  showSpinnerRel();
+
+  // Remover el ID anterior y establecer el nuevo
   localStorage.removeItem("prodID");
   localStorage.setItem("prodID", id);
-  window.location = "product-info.html";
+
+  // Delay para mostrar la animación
+  setTimeout(() => {
+    window.location = "product-info.html";
+  }, 500);
+}
+
+/* Botón "Añadir al carrito" */
+document.addEventListener("DOMContentLoaded", function () {
+  let prodID = localStorage.getItem("prodID");
+  if (prodID) {
+    let prodInfoURL =
+      "https://japceibal.github.io/emercado-api/products/" + prodID + ".json";
+    let productName = document.getElementById("product-name");
+
+    fetch(prodInfoURL)
+      .then((response) => response.json())
+      .then((infoCard) => {
+        console.log("Producto cargado: ", infoCard);
+
+        // Mostrar nombre del producto
+        productName.textContent = infoCard.name;
+        buyBtn(infoCard, prodID);
+      });
+  }
+});
+
+// Función para que todos los botones "Añadir al carrito" funcionen
+function buyBtn(infoCard, prodID) {
+  let buyBtns = Array.from(document.getElementsByClassName("btn-comprar"));
+
+  buyBtns.forEach((boton) => {
+    boton.addEventListener("click", function () {
+      let productoComprado = {
+        id: prodID,
+        name: infoCard.name,
+        cost: infoCard.cost,
+        image: infoCard.images[0],
+        currency: infoCard.currency,
+        quantity: 1,
+      };
+
+      let badgeCarrito = document.getElementById("nav-carrito");
+      badgeCarrito.classList.add("animate__animated", "animate__bounce");
+      setTimeout(() => {
+        badgeCarrito.classList.remove("animate__bounce");
+      }, 1000);
+
+      guardarCompraEnLocalStorage(productoComprado);
+    });
+  });
+}
+
+// Función para guardar o actualizar el producto en el localStorage
+function guardarCompraEnLocalStorage(productoComprado) {
+  let carrito = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+  // Buscar si el producto ya existe en el carrito
+  let existingProduct = carrito.find((item) => item.id === productoComprado.id);
+
+  if (existingProduct) {
+    // Si el producto ya está en el carrito, incrementa la cantidad
+    existingProduct.quantity += 1;
+  } else {
+    // Si el producto no está en el carrito, agregarlo con cantidad inicial de 1
+    productoComprado.quantity = 1;
+    carrito.push(productoComprado);
+  }
+
+  // Guardar carrito actualizado en localStorage
+  localStorage.setItem("shoppingCart", JSON.stringify(carrito));
+  //Actualizar cantidad en el badge del carrito
+  updateCartBadge();
+
+  // Mostrar el modal de confirmación
+  let confirmationModal = new bootstrap.Modal(
+    document.getElementById("confirmationModal")
+  );
+  confirmationModal.show();
+
+  // Configuración de botones dentro del modal
+  document
+    .getElementById("finalizarCompra")
+    .addEventListener("click", function () {
+      // Redirigir al carrito al hacer clic en "Finalizar compra"
+      window.location.href = "cart.html";
+    });
+}
+
+// Función para actualizar el badge del carrito
+function updateCartBadge() {
+  let cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+  let totalQuantity = cart.reduce((total, item) => total + item.quantity, 0); //Suma todas las cantidades de los items usando reduce
+  cartBadge.textContent = totalQuantity || "0"; //Muestra la cantidad o "0" si el carrito está vacío
 }
