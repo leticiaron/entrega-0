@@ -2,14 +2,10 @@
 let prodID = localStorage.getItem("prodID");
 
 // URL que apunta al JSON que contiene la información del producto
-let prodInfoURL =
-  "https://japceibal.github.io/emercado-api/products/" + prodID + ".json";
+let prodInfoURL = PRODUCT_INFO_URL + prodID + ".json";
 
 // URL que apunta al JSON que contiene la información de comentarios
-let prodCommURL =
-  "https://japceibal.github.io/emercado-api/products_comments/" +
-  prodID +
-  ".json";
+let prodCommURL = PRODUCT_INFO_COMMENTS_URL + prodID + ".json";
 
 // Variables de referencias a elementos del HTML
 let containerInfo = document.getElementsByClassName("containerInfo")[0];
@@ -417,8 +413,7 @@ function setProdID(id, event) {
 document.addEventListener("DOMContentLoaded", function () {
   let prodID = localStorage.getItem("prodID");
   if (prodID) {
-    let prodInfoURL =
-      "https://japceibal.github.io/emercado-api/products/" + prodID + ".json";
+    let prodInfoURL = PRODUCT_INFO_URL + prodID + ".json";
     let productName = document.getElementById("product-name");
 
     fetch(prodInfoURL)

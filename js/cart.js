@@ -1,10 +1,11 @@
+//***--------------------------------------> SECCIÓN: Configuración inicial <--------------------------------------***//
 document.addEventListener("DOMContentLoaded", function () {
   let carritoVacio = document.getElementById("containerCarritoVacio");
   let carritoLLeno = document.getElementById("containerCarritoLleno");
   let finalcarrito = document.getElementById("finallity-table");
   let cartBadge = document.getElementById("cartBadge");
 
-  // Función para actualizar el badge del carrito
+  //***--------------------------------------> SECCIÓN: Función para actualizar el badge del carrito <--------------------------------------***//
   function updateCartBadge() {
     let cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
     let totalQuantity = cart.reduce((total, item) => total + item.quantity, 0); //Suma todas las cantidades de los items usando reduce
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Ejecutar inmediatamente por si el DOM ya está cargado
   updateCartBadge();
 
-  // Carrito Vacío
+  //***--------------------------------------> SECCIÓN: Carrito Vacío <--------------------------------------***//
   if (!localStorage.getItem("shoppingCart")) {
     let div = document.getElementById("containerPrincipal");
     div.classList.remove("background");
@@ -30,12 +31,13 @@ document.addEventListener("DOMContentLoaded", function () {
   <a id="btn-cart" class="btn btn-primary" href="categories.html" role="button">Comenzá tu compra</a>
   </div><br><div class="espacioCart"><br></div>`;
   } else {
+    //***--------------------------------------> SECCIÓN: Carrito con productos <--------------------------------------***//
     let storageCarrito = JSON.parse(localStorage.getItem("shoppingCart"));
     let infoCarrito = [...storageCarrito];
     showCart(infoCarrito);
   }
 
-  // Función para mostrar el carrito con productos
+  //***--------------------------------------> SECCIÓN: Función para mostrar productos en el carrito <--------------------------------------***//
   function showCart(cartCompra) {
     carritoLLeno.innerHTML = ""; // Limpiamos el contenido previo para evitar duplicados
 
@@ -94,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
       `;
     });
 
+    //***--------------------------------------> SECCIÓN: Resumen final del Carrito <--------------------------------------***//
     finalcarrito.innerHTML = `
           
         <br>
@@ -129,7 +132,9 @@ document.addEventListener("DOMContentLoaded", function () {
     setupQuantityButtons();
   }
 
-  /*FUNCIÓN ELIMINAR*/
+  //***--------------------------------------> SECCIÓN: Eliminar producto del carrito <--------------------------------------***//
+
+  //Función para eliminar producto del carrito
   function removeItemFromCart(index) {
     let carrito = JSON.parse(localStorage.getItem("shoppingCart"));
     carrito.splice(index, 1); // Eliminar el elemento en la posición index
@@ -144,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  /*Evento botón eliminar*/
+  /*Configuración de los botones de eliminar*/
   function setupDeleteButtons() {
     // Seleccionamos todos los botones de basura
     let trashBtns = document.querySelectorAll(".bi-trash3-fill");
@@ -163,25 +168,31 @@ document.addEventListener("DOMContentLoaded", function () {
     showCart(carrito);
   }
 
+  //***--------------------------------------> SECCIÓN: Modificar cantidades <--------------------------------------***//
   // Función para configurar los eventos de los botones de cantidad
   function setupQuantityButtons() {
     let botonesMas = document.getElementsByClassName("mas");
     let botonesMenos = document.getElementsByClassName("menos");
 
-    //Evento botones de mas
+    //Evento botones de mas (aumentar cantidad)
     Array.from(botonesMas).forEach((boton) => {
       boton.addEventListener("click", function () {
         let index = this.getAttribute("data-index");
-        actualizarCantidad(parseInt(index), 1);    
+        actualizarCantidad(parseInt(index), 1);
         let finalButton = document.getElementById("nav-carrito");
         finalButton.classList.add("animate__animated", "animate__bounce");
         setTimeout(() => {
-        finalButton.classList.remove("animate__bounce");
+          finalButton.classList.remove("animate__bounce");
+        }, 1000);
+        let buttonAnimate = document.getElementById("sumaFinal");
+        buttonAnimate.classList.add("animate__animated", "animate__heartBeat");
+        setTimeout(() => {
+          buttonAnimate.classList.remove("animate__heartBeat");
         }, 1000);
       });
     });
 
-    // Evento botones de menos
+    // Evento botones de menos (disminuir cantidad)
     Array.from(botonesMenos).forEach((boton) => {
       boton.addEventListener("click", function () {
         let index = this.getAttribute("data-index");
@@ -190,6 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
         carritoFinal.classList.add("animate__animated", "animate__bounce");
         setTimeout(() => {
           carritoFinal.classList.remove("animate__bounce");
+        }, 1000);
+        let buttonHeart = document.getElementById("sumaFinal");
+        buttonHeart.classList.add("animate__animated", "animate__heartBeat");
+        setTimeout(() => {
+          buttonHeart.classList.remove("animate__heartBeat");
         }, 1000);
       });
     });
@@ -231,6 +247,8 @@ document.addEventListener("DOMContentLoaded", function () {
     calcularTotal();
   }
 
+  //***--------------------------------------> SECCIÓN: Cálculo de totales <--------------------------------------***//
+
   // Función para calcular el subtotal de un producto
   function subtotalCart(cant, cost, currency) {
     if (currency == "USD") return cant * (cost * 40);
@@ -243,17 +261,20 @@ document.addEventListener("DOMContentLoaded", function () {
     let carrito = JSON.parse(localStorage.getItem("shoppingCart"));
     if (!carrito) return;
 
+    //Conversión USD a UYU
     carrito.forEach((element) => {
       if (element.currency == "USD") {
         element.cost = element.cost * 40;
       }
     });
 
+    //Cálculo del total acumulado
     let total = carrito.reduce(
       (acc, item) => acc + item.quantity * item.cost,
       0
     );
 
+    //Actualización con el total
     let sumaFinal = document.getElementById("sumaFinal");
     let subFinalAmount = document.getElementById("subFinalAmount");
     if (sumaFinal) {
@@ -261,6 +282,7 @@ document.addEventListener("DOMContentLoaded", function () {
       subFinalAmount.textContent = total;
     }
 
+    //Cálculo del costo de envío (según opción seleccionada)
     let opcionesEnvio = document.getElementsByName("cost");
     let tipoEnvio = 0;
 
@@ -278,6 +300,7 @@ document.addEventListener("DOMContentLoaded", function () {
       parseInt(total) + parseInt(costEnvio.textContent);
   }
 
+  //Función para obtener el porcentaje del costo de envío
   function obtenerPct(value) {
     if (value === "premium") {
       return 0.15;
@@ -303,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let costEnvio = document.getElementById("costFinalAmount");
     let totalFinalAmount = document.getElementById("totalFinalAmount");
 
-    //Dependiendo de cual detecte hará el calculo
+    //Calculo basado en la opción seleccionada
     if (value === "premium") {
       costEnvio.textContent = Math.round(subTotal * 0.15);
     }
@@ -323,8 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
   coststandard.addEventListener("click", () => calcularCostoEnvio("standard"));
 });
 
-//SECCIÓN COSTOS
-
+//***--------------------------------------> SECCIÓN: Costos <--------------------------------------***//
 //Función para ocultar botón "Continuar compra" al hacer click
 function showCostsContainer() {
   let continuarCompra = document.getElementById("btnContinuarCompra");
@@ -332,70 +354,319 @@ function showCostsContainer() {
 
   // Oculta el botón
   continuarCompra.style.display = "none";
-  // Muestra el contenedor y aplica la transición
+  // Muestra la sección de costos
   seccionCostos.style.display = "block";
+  //Aplica animación
   setTimeout(() => {
     seccionCostos.classList.add("visible");
   }, 10); // Pausa para activar la transición
 }
 
-//Entrega 7 Punto 4
+//***--------------------------------------> SECCIÓN: Validaciones en formulario de pago <--------------------------------------***//
 let containerPage = document.getElementById("cost-form");
-// clases de inputs de direccion
-let envioCost = document.getElementsByClassName("form-check-input"); // clases de los inputs de tipo de envio y forma de pago
 let btnFinal = document.getElementById("btn-final-payment");
-let provincias = document.getElementById("input-localidad");
 
 // Creacion de evento click para el boton de finalizar compra
-
 containerPage.addEventListener("submit", function (event) {
-  //PARA EL METODO DE PAGO VALIDACION Y ALERTA
-   //PARA EL METODO DE PAGO VALIDACION Y ALERTA
-   if (!formularioCart()) {
-    mostrarAlertaForm();
-  }else if( !formularioTarget()){
-    mostrarAlertaTarjeta();
+  event.preventDefault();
+  event.stopPropagation();
+
+  //Validaciones de diferentes campos
+  if (!validateOpt() && !validateText() && !validateCta()) {
+    const middleOfPage = document.body.scrollHeight / 3;
+    window.scrollTo({
+      top: middleOfPage, // Desplazarse al medio de la página
+      behavior: "smooth", // Desplazamiento suave
+    });
+    event.preventDefault();
+  } else if (!validateText()) {
+    const mdDep = document.body.scrollHeight / 3;
+    window.scrollTo({
+      top: mdDep, // Desplazarse al medio de la página
+      behavior: "smooth", // Desplazamiento suave
+    });
   } else if (!document.querySelector('input[name="payment"]:checked')) {
+    const midpage = document.body.scrollHeight / 3;
+    window.scrollTo({
+      top: midpage, // Desplazarse al medio de la página
+      behavior: "smooth", // Desplazamiento suave
+    });
     mostrarAlertaMetod();
-  }else if(!document.querySelector('input[name="paymentDelivery"]:checked')&& deliveryPaymentSection.classList.contains("show")){
+  } else if (
+    !formularioTarjeta() &&
+    cardPaymentSection.classList.contains("show")
+  ) {
+    const midtar = document.body.scrollHeight / 2;
+    window.scrollTo({
+      top: midtar, // Desplazarse al medio de la página
+      behavior: "smooth", // Desplazamiento suave
+    });
+  } else if (
+    !document.querySelector('input[name="paymentDelivery"]:checked') &&
+    deliveryPaymentSection.classList.contains("show")
+  ) {
+    const midtar = document.body.scrollHeight / 2;
+    window.scrollTo({
+      top: midtar, // Desplazarse al medio de la página
+      behavior: "smooth", // Desplazamiento suave
+    });
     alertContra();
   } else {
+    //Mostrar modal de confirmación si todo es válido
     let confirmationModal = new bootstrap.Modal(
       document.getElementById("confirmationModal")
     );
     confirmationModal.show();
+
+    //Recopilar datos del formulario
+    let radioPay = document.querySelector(
+      'input[name="payment"]:checked'
+    ).value;
+    let radioSel = document.querySelector('input[name="cost"]:checked').value;
+    let provincias = document.getElementById("input-localidad");
+    const selectedTexto = provincias.options[provincias.selectedIndex].text;
+    let localidad = document.getElementById("local").value;
+    let calle = document.getElementById("calle");
+    let nro = document.getElementById("nro");
+    let apto = document.getElementById("apt");
+    let esquina = document.getElementById("esq");
+    let sub_total = document.getElementById("subFinalAmount").textContent;
+    let costo_envio = document.getElementById("costFinalAmount").textContent;
+    let total = document.getElementById("totalFinalAmount").textContent;
+    let productos = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+    console.log("Productos en el carrito:", productos);
+    let order = {
+      tipo_envio: radioSel,
+      departamento: selectedTexto,
+      localidad: localidad,
+      calle: calle.value,
+      nro: nro.value,
+      apto: apto.value || null,
+      esquina: esquina.value || null,
+      forma_pago: radioPay,
+      sub_total: parseFloat(sub_total),
+      costo_envio: parseFloat(costo_envio),
+      total: parseFloat(total),
+      productos: productos.map((producto) => ({
+        product_id: producto.id || null,
+        name: producto.name,
+        quantity: producto.quantity,
+        price: producto.cost,
+        sub_total: producto.quantity * producto.cost,
+      })),
+    };
+
+    //***--------------------------------------> SECCIÓN: Envío de solicitud al Backend <--------------------------------------***//
+
+    //Enviar la solicitud al backend
+    fetch("http://localhost:3000/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((error) => {
+            throw new Error(
+              `Error del servidor: ${error.message || "Desconocido"}`
+            );
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Compra realizada por: ", data);
+        console.log(
+          "Datos enviados al backend:",
+          JSON.stringify(order, null, 2)
+        );
+      })
+      .catch((error) => {
+        console.error("Error al realizar la solicitud:", error);
+        alert("Hubo un problema al procesar la compra.");
+      });
   }
-  event.preventDefault();
-  event.stopPropagation();
 });
 
-//funcion para validar campos de tipo texto y seleccion en el formulario
-function formularioCart() {
-  var inputs = document.querySelectorAll(".confirmar-formulario");
-  var seleccion = document.querySelectorAll(".confirmar-form-select");
+//***--------------------------------------> SECCIÓN: Validacion de opciones en el formulario <--------------------------------------***//
+
+//Función para option select de "Departamento"
+let optionDep = document.querySelectorAll(".confirmar-form-select");
+let selectionOpt = document.getElementById("input-localidad");
+
+function validateOpt() {
+  let isValid = true;
+
+  Array.from(optionDep).forEach((option) => {
+    if (option.value === "") {
+      selectionOpt.classList.add("is-invalid");
+      selectionOpt.classList.remove("is-valid");
+      isValid = false; // Si hay algún input inválido, cambia isValid a false
+    } else {
+      selectionOpt.classList.add("is-valid");
+      selectionOpt.classList.remove("is-invalid");
+    }
+
+    option.addEventListener("select", realTimeValid);
+  });
+  return isValid;
+}
+
+//Validación de inputs de texto
+let inputValue = document.querySelectorAll(".confirmar-formulario");
+
+function validateText() {
+  let isValid = true;
+
+  Array.from(inputValue).forEach((input) => {
+    if (!input.checkValidity()) {
+      input.classList.add("is-invalid");
+      input.classList.remove("is-valid");
+      isValid = false; // Si hay algún input inválido, cambia isValid a false
+    } else {
+      input.classList.add("is-valid");
+      input.classList.remove("is-invalid");
+    }
+    input.addEventListener("input", realTimeValid);
+  });
+  return isValid;
+}
+
+//Validación Tarjeta
+let datosTarget = document.querySelectorAll(".card-control-on");
+
+function formularioTarjeta() {
+  let isValid = true;
+
+  if (cardPaymentSection.classList.contains("show")) {
+    Array.from(datosTarget).forEach((input) => {
+      if (!input.checkValidity()) {
+        input.classList.add("is-invalid");
+        input.classList.remove("is-valid");
+        isValid = false; // Si hay algún input inválido, cambia isValid a false
+      } else {
+        input.classList.add("is-valid");
+        input.classList.remove("is-invalid");
+      }
+      input.addEventListener("input", realTimeValid);
+    });
+    return isValid;
+  }
+}
+
+//Validación cuotas Tarjeta
+let selectionCta = document.getElementById("installments");
+
+function validateCta() {
+  let isValid = true;
+
+  if (cardPaymentSection.classList.contains("show")) {
+    isValid = selectionCta.selectedIndex > 0; //validar que haya seleccionado una opción diferente a la inicial
+    if (!isValid) {
+      //Si está seleccionada la opción "Cuotas:"
+      selectionCta.classList.add("is-invalid");
+      selectionCta.classList.remove("is-valid");
+      isValid = false;
+      //Validar si seleccionó una opción válida
+    } else {
+      selectionCta.classList.add("is-valid");
+      selectionCta.classList.remove("is-invalid");
+    }
+  }
+  return isValid;
+}
+
+/*Validación en tiempo real para cuotas Tarjeta*/
+selectionCta.addEventListener("change", function (event) {
+  const isValid = event.target.value !== "" && event.target.value !== "0";
+
+  if (isValid) {
+    event.target.classList.add("is-valid");
+    event.target.classList.remove("is-invalid");
+  } else {
+    event.target.classList.add("is-invalid");
+    event.target.classList.remove("is-valid");
+  }
+});
+
+//Función genérica para validaciones en tiempo real
+function realTimeValid(event) {
+  if (event.target.checkValidity()) {
+    event.target.classList.add("is-valid");
+    event.target.classList.remove("is-invalid");
+  } else {
+    event.target.classList.add("is-invalid");
+    event.target.classList.remove("is-valid");
+  }
+}
+
+//Funcion validación de opcion de pago Tarjeta
+function formularioTarget() {
+  var datosTarget = document.querySelectorAll(".card-control");
+  var cuotas = document.querySelectorAll(".card-control-target");
   let correct = true;
-  // Recorre los inputs y al estar vacios devuelve falso
-  inputs.forEach((input) => {
-    if (input.value.trim() === "") {
-      console.log("Debe llenar todos los campos");
-      correct = false;
-    }
-  });
-  // Recorre los elementos select y al estar vacio devuelve falso
-  seleccion.forEach((select) => {
-    if (select.value==="") {
-      console.log("Seleccione departamento");
-      correct = false;
-    }
-  });
+
+  if (cardPaymentSection.classList.contains("show")) {
+    // Recorre los inputs y al estar vacios devuelve falso
+    datosTarget.forEach((datos) => {
+      if (datos.value.trim() === "") {
+        console.log("Debe llenar todos los campos");
+        correct = false;
+      }
+    });
+    // Recorre los elementos select y al estar vacio devuelve falso
+    cuotas.forEach((cuota) => {
+      if (cuota.value === "") {
+        console.log("Seleccione cuotas");
+        correct = false;
+      }
+    });
+  }
   return correct;
 }
-//Muestra el correo en el modal 
+
+// Activar inicialmente la validación en tiempo real en los inputs y option del formulario
+Array.from(inputValue).forEach((input) => {
+  input.addEventListener("input", realTimeValid);
+});
+Array.from(optionDep).forEach((option) => {
+  option.addEventListener("change", realTimeValid);
+});
+Array.from(inputValue).forEach((input) => {
+  input.addEventListener("input", realTimeValid);
+});
+
+//***--------------------------------------> SECCIÓN: Alertas validaciones <--------------------------------------***//
+
+//Funciones de las distintas alertas para cada campo a llenar
+function mostrarAlertaMetod() {
+  let alertaMetodo = document.createElement("div");
+  alertaMetodo.innerHTML += `<div  id="alt" class="alert alert-secondary alert-custom" role="alert">
+<p>Seleccione una forma de pago, por favor</p></div>`;
+  document.body.appendChild(alertaMetodo);
+  setTimeout(() => {
+    alertaMetodo.remove();
+  }, 1000);
+}
+
+function alertContra() {
+  let alertaEntrega = document.createElement("div");
+  alertaEntrega.innerHTML += `<div  id="mostrarPrimero" class="alert alert-secondary alert-custom" role="alert">
+<p>Seleccione un metodo de pago, por favor</p></div>`;
+  document.body.appendChild(alertaEntrega);
+  setTimeout(() => {
+    alertaEntrega.remove();
+  }, 1000);
+}
+
+//***--------------------------------------> SECCIÓN: Modal de Confirmación <--------------------------------------***//
+
+//Muestra el correo en el modal de confirmación
 let usuarioCorreo = localStorage.getItem("username");
 let contenedorCorreo = document.getElementById("email-final");
 contenedorCorreo.innerText += ` ` + usuarioCorreo;
 
-//Eventos para boton para redireccionar a categories o cerrar el modal borrando todo el carrito
+//Eventos en modal de confirmación
 let btnCarrito = document.getElementById("final-btn-carr");
 btnCarrito.addEventListener("click", function () {
   localStorage.removeItem("shoppingCart");
@@ -412,7 +683,8 @@ document
     location.reload();
   });
 
-/*SECCIÓN OPCIONES DE PAGO*/
+//***--------------------------------------> SECCIÓN: Opciones de pago <--------------------------------------***//
+
 let paymentTarjeta = document.getElementById("paymentTarjeta");
 let paymentEntrega = document.getElementById("paymentEntrega");
 let deliveryPaymentSection = document.getElementById("deliveryPaymentSection");
@@ -432,74 +704,7 @@ function handlePaymentSelection() {
   }
 }
 
-//Eventos para los cambios de opción de pago
+//Eventos para actualizar opciones de pago según selección
 paymentEntrega.addEventListener("change", handlePaymentSelection);
 paymentTarjeta.addEventListener("change", handlePaymentSelection);
-handlePaymentSelection();
-
-//Funcion validadora de opcion de pago Tarjeta de credito
-function formularioTarget() {
-  var datosTarget = document.querySelectorAll(".card-control");
-  var cuotas = document.querySelectorAll(".card-control-target");
-  let correct = true;
-
-  if(cardPaymentSection.classList.contains("show")){
-  
-  // Recorre los inputs y al estar vacios devuelve falso
-  datosTarget.forEach((datos) => {
-    if (datos.value.trim() === "") {
-      console.log("Debe llenar todos los campos");
-      correct = false;
-    }
-  });
-  // Recorre los elementos select y al estar vacio devuelve falso
-  cuotas.forEach((cuota) => {
-    if (cuota.value==="") {
-      console.log("Seleccione cuotas");
-      correct = false;
-    }
-  })};
-  return correct;
-}
-
-//Funciones de las distintas alertas para cada campo a llenar
-function mostrarAlertaForm(){
-  let mostrandoAlerta = document.createElement("div");
-  mostrandoAlerta.innerHTML+= `<div  id="form-tipotext" class="alert alert-secondary alert-custom" role="alert">
-  <p>Complete todos los campos, por favor</p>
-</div>`;
-document.body.appendChild(mostrandoAlerta);
-setTimeout(()=>{
-  mostrandoAlerta.remove();
-},1000);
-}
-
-function mostrarAlertaTarjeta(){
-  let alertaTarjeta = document.createElement("div");
-  alertaTarjeta.innerHTML+= `<div  id="tarjetaContra" class="alert-dismissible alert alert-secondary alert-custom" role="alert">
-<p>Ingresa todos los datos de tu tarjeta, por favor</p></div>`;
-document.body.appendChild(alertaTarjeta);
-setTimeout(()=>{
-  alertaTarjeta.remove();
-},1000);
-}
-
-function mostrarAlertaMetod(){
-  let alertaMetodo = document.createElement("div");
-  alertaMetodo.innerHTML+= `<div  id="alt" class="alert alert-secondary alert-custom" role="alert">
-<p>Seleccione una forma de pago, por favor</p></div>`;
-document.body.appendChild(alertaMetodo);
-setTimeout(()=>{
-  alertaMetodo.remove();
-},1000);
-}
-
-function alertContra(){
-  let alertaEntrega = document.createElement("div");
-  alertaEntrega.innerHTML+= `<div  id="mostrarPrimero" class="alert alert-secondary alert-custom" role="alert">
-<p>Seleccione una metodo de pago, por favor</p></div>` ;
-document.body.appendChild(alertaEntrega);
-setTimeout(()=>{
-  alertaEntrega.remove();
-},1000);
-}
+handlePaymentSelection(); //Configuración inicial
